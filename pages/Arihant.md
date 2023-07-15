@@ -1,0 +1,4 @@
+- What are my needs and wants financially?
+- Where do I want to be?
+- Short Term Goals
+- Think about Finances

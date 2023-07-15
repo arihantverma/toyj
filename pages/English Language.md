@@ -1,2 +1,2 @@
-- #[[All Walking/Moving Verbs]]
+- #[[walkingwords]]
 - #humourwriting

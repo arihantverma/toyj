@@ -1,0 +1,6 @@
+- > **Link:** [https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/examples/dialog/](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/examples/dialog/)
+- If existing node, and it’s used in `appendChild` then it’s moved from the current position to the new position dictated by appendChild. [[ref]](https://chat.openai.com/share/dd263bbc-368a-4add-96e3-5f4faf0aaafc)
+- Return back to focus element is necessary
+- Optional: `focusFirst` for any element that needs to be focussed when dialog becomes visible.
+- Technique used for focus lock: bracketing dialog element with two empty divs with tabIndex along with Javascript function `trapFocus` which listens to document's `focus` event and ensures that trap doesn't go out of the dialog, with the help of these two.
+- [Github Gist for annotated/commented code for better understanding in the future](https://gist.github.com/arihantverma/af03123bcd2ac641f82ac8ddb1b018a9)

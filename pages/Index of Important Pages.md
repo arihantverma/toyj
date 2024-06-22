@@ -1,2 +1,7 @@
 - #puter
 - [[Things I Shouldn't Do At All]]
+- #companies
+- #amazingproductvideos
+- #investing
+- #tech #bug
+- #mindblown

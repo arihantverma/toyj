@@ -5,3 +5,6 @@
 - #investing
 - #tech #bug
 - #mindblown
+- #[[Course Notes]]
+- #[[Book Notes]]
+-

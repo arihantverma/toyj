@@ -18,7 +18,6 @@
 	  COMMIT;
 	  ```
 - ## Relationships
-  collapsed:: true
 	- ### One to One
 	  collapsed:: true
 		- Need: to keep entities separate: User, Aadhar. Can't put Aadhar into User as one entity otherwise there might be
@@ -30,7 +29,6 @@
 		- `Person` -> Many -> `PhoneNumber`
 		- `PhoneNumber` -> Has one ( belongs to one) -> `Person`
 	- ### Many to Many
-	  collapsed:: true
 		- `Post` <-(each can have many of each other)-> `Tags`
 		- You cannot represent a many-to-many relationship between two database tables.
 			- Have to create a third **junction/bridge/associative** table
@@ -204,4 +202,92 @@
 		- TODO [Prisma: Tracing](https://www.prisma.io/docs/orm/prisma-client/observability-and-logging/opentelemetry-tracing)
 		- TODO [Prisma: Metrics](https://www.prisma.io/docs/orm/prisma-client/observability-and-logging/metrics)
 - ## Updating Data
+  collapsed:: true
+	- updating, deleting, creating images
+	- how to use a single query ( nested prisma update)
+		- ```typescript
+		  await prisma.note.update({
+		    select: {id: true },
+		    where: {id: params.noteId},
+		    data: {
+		      title,
+		      content,
+		      images: {
+		  		deletedMany: {id: notIn: imageUpdates.map(i => i.id)},
+		      	updateMany: imageUpdates.map(updates => ({
+		            where: {id: updates.id},
+		            // if image is updated, update its id to burst browser cache
+		            data: {...updates, id: updates.blob ? cuid() : updates.id}
+		          })),
+		      	create: newImages
+		      }
+		    }
+		  })
+		  ```
+- ## SQL
+	- [image: types of joins explanation](https://i0.wp.com/blog.jooq.org/wp-content/uploads/2016/07/venn-join1.png?w=700&ssl=1)
+	- Sub queries ( example of order by )
+	- Indexes:
+		- ***Keys***:
+			- primary keys – indexed by default
+			- unique fields – handled by prisma
+			- non unique keys – foreign keys
+		- ***Things to consider indexing***
+			- `WHERE` clause stuff
+			- `ORDER BY` clause stuff
+		- ***Identifying index opportunities***
+			- Memory and CPU spikes
+			- `EXPLAIN QUERY PLAN`
+				- `SCAN` or`SEARCH` without an index
+			- Example of query plan:
+				- `EXPLAIN QUERY PLAN SELECT * FROM user WHERE name = 'Alice';`
+					- Query Plan: `--SCAN user`
+				- `EXPLAIN QUERY PLAN SELECT * FROM user WHERE username = 'alicerocks';`
+					- QUERY PLAN: `--SEARCH user USING INDEX User_username_key (username=?)`
+			- ***Prisma Indexes:***
+				- do a `@@index([<columnNames>])`
+- ## Query Optimisation
+	- Foreign Keys
+	- Multi-Col Index
+		- Before creating index:
+		  collapsed:: true
+			- ```
+			  QUERY PLAN
+			  |--SCAN user
+			  |--SEARCH image USING INDEX UserImage_userId_key (userId=?) LEFT-JOIN
+			  |--CORRELATED SCALAR SUBQUERY 1
+			  |  |--SEARCH Note USING INDEX Note_ownerId_idx (ownerId=?)
+			  |  `--USE TEMP B-TREE FOR ORDER BY
+			  `--USE TEMP B-TREE FOR ORDER BY
+			  ```
+				- Thing to note: B-tree ordering for each user for each note
+		- After creating ownerId, updatedAt multi-col index for note
+		  collapsed:: true
+			- ```sql
+			  EXPLAIN QUERY PLAN
+			  SELECT user.id, user.username, user.name, image.id as imageId
+			  FROM User AS user
+			  LEFT JOIN UserImage AS image ON user.id = image.userId
+			  WHERE user.username LIKE '%kody%'
+			  OR user.name LIKE '%kody%'
+			  ORDER BY (
+			     SELECT updatedAt
+			     FROM Note
+			     WHERE ownerId = user.id
+			     ORDER BY updatedAt DESC
+			     LIMIT 1
+			  ) DESC
+			  LIMIT 50;
+			  ```
+				- ```
+				  QUERY PLAN
+				  |--SCAN user
+				  |--SEARCH image USING INDEX UserImage_userId_key (userId=?) LEFT-JOIN
+				  |--CORRELATED SCALAR SUBQUERY 1
+				  |  `--SEARCH Note USING COVERING INDEX Note_ownerId_updatedAt_idx (ownerId=?)
+				  `--USE TEMP B-TREE FOR ORDER BY
+				  ```
+					- Thing to note: note level b query sorting not required anymore
+		- `LIKE` wild card can't depend on indexes, so the output of the query plan might not be correct
+	-
 	-

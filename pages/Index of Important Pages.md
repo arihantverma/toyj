@@ -7,4 +7,5 @@
 - #mindblown
 - #[[Course Notes]]
 - #[[Book Notes]]
--
+- #twosmoothies
+- #opportunity

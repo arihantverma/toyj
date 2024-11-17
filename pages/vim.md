@@ -28,12 +28,65 @@
 - `dd`: delete the whole line
 	- similarly `2dd` delete two lines
 - `u`: undo
-- `U`: undo all changes one a line
+- `U`: undo all changes on a line
 - `<C-r>`: redo
-- `p`: put previously deleted text **after** the cursor
-- `P`: before the cursor
+- `p`: (paste) put previously deleted text **after** the cursor
+- `P`: **before** the cursor
 - `rx`: replace <r> cursor selection with <x>
+- `R`: to replace more than one character ( the weird insert mode in document editors just made sense 😅)
 - `ce`: to change from the cursor until the end of the word. This initiates write mode.
 	- `c` is for change
 	- all other motions work like with `d`
-- start with lesson 4.1
+- ## Cursor Location and File Status
+	- `<C-g>`: shows *location of file* and *file status* of file
+	- `G`: go to the bottom of the file
+	- `gg`: go to the top of the file
+	- `<number> G`: go to line
+- ## Search Command
+	- `/`
+		- `n`: next occurence
+		- `N`: Back to the previous occurence
+	- `?`: search for words in backward direction
+	- `<C-o>` takes you to older positions
+	- `<C-i>` takes you to newer positions
+	-
+- ## Matching Parenthesis Search
+	- Go to any parentheses -> `%` -> cursor moves to matching parenthesis
+- ## Substitute Command
+	- `:s/thee/the` (first occurrence of `thee` is substituted with `the`) in one line
+	- `:s/thee/the/g` same but for all occurrences of the line
+	- `:%s/old/new/g` substitute in the whole file
+	- `%s/old/new/gc`: whole file, but with a prompt as to substitute or not
+	- `:1,4s/old/new/g` change every occurrence of a character string between two lines (1, 4)
+- ## Execute External Command
+	- `:! <external command> + enter`
+- ## Selecting Text to Write
+	- `:w` save file
+	- `v` -> start visual selection
+		- `:w text.txt` -> write selected text in `text.txt`
+- ## Retrieving and Merging Files
+	- `:r <filepath>` -> will copy content from that file and paste it at cursor
+	- `:r !ls` -> read output of external command and puts it below the cursor
+- ## Open Command
+	- `o`: open insert mode on line below the current one
+	- `O`: open insert mode on line above the current one
+- ## Append
+	- `a`: append after cursor
+- ## Copy Paste
+	- `y` (operator) yank (copy)
+		- `+y`: copy to system clipboard
+		- `+yy`: yank the current line to system clipboard
+		- can use with motion
+	- `p`:  paste
+	- `P`: put before cursor rather than after
+- ## Set Option
+	- `:set ic`: ignore case
+		- `:set noic`
+	- `:set hls`
+		- `:set nohls`
+	- `:set is` (incremental search)
+		- `:set nois`
+	- add `inv` prefix to any of these commands -> toggle
+	- `:help`
+	- `<C-w><C-w>`: switch between windows
+	- in the command mode -> write any letter + `<C-d>` autocompletes available commands -> tab to go through
